@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tukubaproxy</title>
+    <style>
+        body {
+            background: url('https://get.wallhere.com/photo/pattern-monochrome-telegram-logo-cats-dog-fish-basketball-4k-simple-background-2124957.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #0ff;
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #7289da;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #5a73b5;
+        }
+
+        #results {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tukubaproxyで検索</h1>
+    <div class="search-container">
+        <input type="text" id="query" placeholder="検索クエリを入力">
+        <button onclick="performSearch()">検索</button>
+    </div>
+    <div id="results"></div>
+
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('query').value;
+            const proxyUrl = 'https://api.allorigins.win/get?url=';  // CORS制限を回避するためのプロキシ
+            const targetUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+
+            try {
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                if (!response.ok) {
+                    throw new Error('ネットワーク応答が正常ではありません');
+                }
+                const data = await response.json();
+                document.getElementById('results').innerHTML = data.contents;
+            } catch (error) {
+                console.error('フェッチ操作に問題が発生しました:', error);
+            }
+        }
+    </script>
+</body>
+</html>
