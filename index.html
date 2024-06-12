@@ -57,6 +57,16 @@
             padding: 20px;
             border-radius: 10px;
         }
+
+        #results a {
+            color: #0ff;
+            text-decoration: none;
+            padding: 5px;
+        }
+
+        #results a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -79,7 +89,29 @@
                     throw new Error('ネットワーク応答が正常ではありません');
                 }
                 const data = await response.json();
-                document.getElementById('results').innerHTML = data.contents;
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = data.contents;
+
+                // リンクをプロキシ経由でクリックしたときの処理を追加する
+                const links = resultsDiv.getElementsByTagName('a');
+                for (let i = 0; i < links.length; i++) {
+                    const originalHref = links[i].getAttribute('href');
+                    if (originalHref && originalHref.startsWith('http')) {
+                        links[i].addEventListener('click', async (event) => {
+                            event.preventDefault();
+                            try {
+                                const linkResponse = await fetch(proxyUrl + encodeURIComponent(originalHref));
+                                if (!linkResponse.ok) {
+                                    throw new Error('リンクのアクセスに問題があります');
+                                }
+                                const linkData = await linkResponse.text();
+                                resultsDiv.innerHTML = linkData;
+                            } catch (error) {
+                                console.error('リンクのフェッチ中に問題が発生しました:', error);
+                            }
+                        });
+                    }
+                }
             } catch (error) {
                 console.error('フェッチ操作に問題が発生しました:', error);
             }
